@@ -38,7 +38,7 @@ class Notifications extends React.Component<Props> {
 
   render() {
     const { classes } = this.props;
-    const open = ! this.props.dismissed;
+    const open = ! this.props.dismissed && this.props.message.length ? true : false;
     return(
       <Snackbar
         anchorOrigin={{

@@ -33,6 +33,8 @@ import UpdateUser from './pages/Users/UpdateUser';
 
 import NavigationList from './pages/Navigation/NavigationList';
 
+import { hydrate } from './actions/cred';
+
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:5000',
   timeout: 1000,
@@ -43,6 +45,8 @@ var store = createStore(
   reducers,
   applyMiddleware(thunk.withExtraArgument(axiosInstance))
 );
+
+store.dispatch(hydrate(window.location.pathname));
 
 ReactDOM.render(
   <Provider store={store}>
