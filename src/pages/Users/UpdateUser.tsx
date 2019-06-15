@@ -110,7 +110,7 @@ class UpdateUser extends React.Component<Props,State> {
 
     var roles:any = [];
     for (var role in ROLES)
-      roles.push(<MenuItem value={ROLES[role]}>{role}</MenuItem>);
+      roles.push(<MenuItem key={role} value={ROLES[role]}>{role}</MenuItem>);
 
     return(
       <div>

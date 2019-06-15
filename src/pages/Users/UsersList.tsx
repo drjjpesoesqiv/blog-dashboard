@@ -85,7 +85,7 @@ class Users extends React.Component<Props> {
               {this.props.users.map((row:any) => (
                 <TableRow key={row.username}>
                   <TableCell align="left">
-                    <EditIcon className={classes.button} onClick={() => this.props.history.push(`/user/u/${row._id}`)} />
+                    <EditIcon className={classes.button} onClick={() => this.props.history.push(`/users/u/${row._id}`)} />
                     <DeleteIcon className={classes.button} onClick={() => this.delete(row._id, row.username)} />
                   </TableCell>
                   <TableCell align="left">{row.username}</TableCell>
