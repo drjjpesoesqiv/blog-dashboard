@@ -8,6 +8,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 
 import Header from '../../components/Header';
+import Draft from '../../components/Draft';
 
 import { newPost } from '../../actions/posts';
 
@@ -75,6 +76,10 @@ class NewPost extends React.Component<Props,State> {
     this.setState(newState);
   }
 
+  draftOnChange = (content:any) => {
+    this.setState({ content: content });
+  }
+
   render() {
     const { classes } = this.props;
     return(
@@ -89,15 +94,8 @@ class NewPost extends React.Component<Props,State> {
               onChange={this.onTextFieldChange}
               value={this.state.title}
             />
-            <TextField
-              label="Content"
-              multiline
-              name="content"
-              rows="10"
-              rowsMax="10"
-              onChange={this.onTextFieldChange}
-              value={this.state.content}
-            />
+
+            <Draft content="" onChangeCallback={this.draftOnChange} />
 
             <div className={classes.buttons}>
               <Button

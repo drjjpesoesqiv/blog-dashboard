@@ -13,3 +13,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.DraftEditor-root {
+  background-color: #111;
+  border-radius: 16px;
+  color: #eee;
+  min-height: 256px;
+  padding: 16px;
+}
