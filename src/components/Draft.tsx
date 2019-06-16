@@ -3,14 +3,12 @@ import React from 'react';
 import {
   ContentState,
   convertToRaw,
-  convertFromHTML,
   Editor,
-  EditorState,
-  RawDraftContentBlock,
-  RawDraftContentState
+  EditorState
 } from 'draft-js';
 
 import htmlToDraft from 'html-to-draftjs';
+import draftToHtml from 'draftjs-to-html';
 
 interface Props {
   onChangeCallback: (content:any) => void;
@@ -49,16 +47,10 @@ class Draft extends React.Component<Props,State> {
     return EditorState.createWithContent(contentState);
   }
 
-  toHtml(raw:RawDraftContentState) {
-    return raw.blocks.map((block:RawDraftContentBlock) => {
-      return `<p>${block.text}</p>`;
-    }).join('');
-  }
-
   editorOnChange = (editorState:EditorState) => {
     this.setState({ editorState });
     const raw = convertToRaw(editorState.getCurrentContent());
-    const html = this.toHtml(raw);
+    const html = draftToHtml(raw);
     this.props.onChangeCallback(html);
   }
 
