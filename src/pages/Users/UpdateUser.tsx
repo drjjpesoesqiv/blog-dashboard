@@ -27,6 +27,9 @@ const styles = createStyles({
     display: "flex",
     flexDirection: "column",
   },
+  apiAccess: {
+    marginBottom: "16px"
+  },
   buttons: {
     display: "flex",
     flexDirection: "row",
@@ -146,6 +149,19 @@ class UpdateUser extends React.Component<Props,State> {
         <Header text="New User" />
         <Paper className={classes.container} >
           <form className={classes.form} noValidate autoComplete="off">
+            <div className={classes.apiAccess}>
+            { this.props.user.apiKey ? <p>API Key: {this.props.user.apiKey}</p> : '' }
+            { ! this.props.user.apiKey
+              ? <Button
+                onClick={() => this.grantApiAccess()}
+                className={classes.grantButton}
+                variant="contained">Grant API Access</Button>
+              : <Button
+                onClick={() => this.revokeApiAccess()}
+                className={classes.revokeButton}
+                variant="contained">Revoke API Access </Button>
+            }
+            </div>
             <FormControl className={classes.formControl}>
               <InputLabel htmlFor="role">Role</InputLabel>
               <Select
@@ -182,19 +198,6 @@ class UpdateUser extends React.Component<Props,State> {
               onChange={this.onTextFieldChange}
               value={this.state.password}
             />
-
-            { this.props.user.apiKey ? <p>API Key: {this.props.user.apiKey}</p> : '' }
-
-            { ! this.props.user.apiKey
-              ? <Button
-                onClick={() => this.grantApiAccess()}
-                className={classes.grantButton}
-                variant="contained">Grant API Access</Button>
-              : <Button
-                onClick={() => this.revokeApiAccess()}
-                className={classes.revokeButton}
-                variant="contained">Revoke API Access </Button>
-            }
 
             <div className={classes.buttons}>
               <Button
