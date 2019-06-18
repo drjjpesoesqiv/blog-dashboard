@@ -13,6 +13,8 @@ import Select from '@material-ui/core/Select';
 
 import Header from '../../components/Header';
 
+import { grant, revoke } from '../../actions/api';
+import { clearNotificationValue } from '../../actions/notifications';
 import { getUserById, updateUser } from '../../actions/users';
 
 import { ROLES } from '../../config';
@@ -34,6 +36,16 @@ const styles = createStyles({
     marginLeft: "16px",
     width: "128px"
   },
+  grantButton: {
+    backgroundColor: "green",
+    color: "white",
+    width: "196px"
+  },
+  revokeButton: {
+    backgroundColor: "red",
+    color: "white",
+    width: "196px"
+  },
   textField: {
     marginBottom: "16px",
     width: "256px"
@@ -45,6 +57,9 @@ interface Props {
   location:any;
   match:any;
   classes:any;
+  grant: (_userId:string) => void;
+  revoke: (_userId:string) => void;
+  clearNotificationValue: () => void;
   getUserById: (_id:string) => void;
   updateUser: (userData:any) => void;
   user:any;
@@ -78,7 +93,13 @@ class UpdateUser extends React.Component<Props,State> {
       email: next.user.email,
       username: next.user.username,
       password: next.user.password
-    })
+    });
+
+    const { reload } = next.notification;
+    if (reload) {
+      this.props.getUserById(this.props.user._id);
+      this.props.clearNotificationValue();
+    }
   }
 
   save = () => {
@@ -103,6 +124,14 @@ class UpdateUser extends React.Component<Props,State> {
     const newState:any = {};
     newState[e.target.name] = e.target.value;
     this.setState(newState);
+  }
+
+  grantApiAccess = () => {
+    this.props.grant(this.props.user._id);
+  }
+
+  revokeApiAccess = () => {
+    this.props.revoke(this.props.user._id);
   }
 
   render() {
@@ -154,6 +183,19 @@ class UpdateUser extends React.Component<Props,State> {
               value={this.state.password}
             />
 
+            { this.props.user.apiKey ? <p>API Key: {this.props.user.apiKey}</p> : '' }
+
+            { ! this.props.user.apiKey
+              ? <Button
+                onClick={() => this.grantApiAccess()}
+                className={classes.grantButton}
+                variant="contained">Grant API Access</Button>
+              : <Button
+                onClick={() => this.revokeApiAccess()}
+                className={classes.revokeButton}
+                variant="contained">Revoke API Access </Button>
+            }
+
             <div className={classes.buttons}>
               <Button
                 onClick={() => this.save()}
@@ -174,10 +216,12 @@ class UpdateUser extends React.Component<Props,State> {
   }
 }
 
-function mapStateToProps({ users }:any) {
+function mapStateToProps({ notifications, users }:any) {
   return {
+    notification: notifications.value,
     user: users.user
   };
 }
 
-export default connect(mapStateToProps, { getUserById, updateUser })(withStyles(styles)(withRouter(UpdateUser)));
+const propFuncs = { clearNotificationValue, grant, revoke, getUserById, updateUser };
+export default connect(mapStateToProps, propFuncs)(withStyles(styles)(withRouter(UpdateUser)));
