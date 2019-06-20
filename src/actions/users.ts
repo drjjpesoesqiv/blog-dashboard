@@ -36,6 +36,8 @@ export const updateUser = (userData:any) =>
           type: NEW_NOTIFICATION,
           payload: { content: "User Updated" }
         });
+
+        dispatch(getUserById(userData._id));
       })
       .catch((err:AxiosError) => {
         if (err.response && err.response.status === 403) {

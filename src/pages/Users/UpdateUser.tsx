@@ -96,7 +96,6 @@ class UpdateUser extends React.Component<Props,State> {
   }
 
   componentWillReceiveProps(next:any) {
-    console.log(next.user);
     this.setState({
       role: next.user.role,
       email: next.user.email,
@@ -104,12 +103,6 @@ class UpdateUser extends React.Component<Props,State> {
       password: next.user.password,
       permissions: next.user.permissions || {}
     });
-
-    const { reload } = next.notification;
-    if (reload) {
-      this.props.getUserById(this.props.user._id);
-      this.props.clearNotificationValue();
-    }
   }
 
   save = () => {
@@ -244,7 +237,6 @@ class UpdateUser extends React.Component<Props,State> {
 
 function mapStateToProps({ notifications, users }:any) {
   return {
-    notification: notifications.value,
     user: users.user
   };
 }
