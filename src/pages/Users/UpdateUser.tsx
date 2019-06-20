@@ -18,6 +18,7 @@ import { clearNotificationValue } from '../../actions/notifications';
 import { getUserById, updateUser } from '../../actions/users';
 
 import { ROLES } from '../../config';
+import Permissions from '../../components/Permissions';
 
 const styles = createStyles({
   container: {
@@ -31,9 +32,11 @@ const styles = createStyles({
     marginBottom: "16px"
   },
   buttons: {
+    borderTop: "1px solid #ddd",
     display: "flex",
     flexDirection: "row",
-    margin: "16px 0px"
+    margin: "16px 0px",
+    paddingTop: "16px"
   },
   button: {
     marginLeft: "16px",
@@ -73,6 +76,7 @@ interface State {
   email:string;
   username:string;
   password:string;
+  permissions:any;
 }
 
 class UpdateUser extends React.Component<Props,State> {
@@ -82,7 +86,8 @@ class UpdateUser extends React.Component<Props,State> {
       role: "",
       email: "",
       username: "",
-      password: ""
+      password: "",
+      permissions: {}
     };
   }
 
@@ -91,11 +96,13 @@ class UpdateUser extends React.Component<Props,State> {
   }
 
   componentWillReceiveProps(next:any) {
+    console.log(next.user);
     this.setState({
       role: next.user.role,
       email: next.user.email,
       username: next.user.username,
-      password: next.user.password
+      password: next.user.password,
+      permissions: next.user.permissions || {}
     });
 
     const { reload } = next.notification;
@@ -113,6 +120,9 @@ class UpdateUser extends React.Component<Props,State> {
       username: this.state.username
     }
 
+    if (this.state.role !== ROLES.ADMIN)
+      userData['permissions'] = this.state.permissions;
+
     if (this.state.password.length > 0)
       userData['password'] = this.state.password;
 
@@ -127,6 +137,12 @@ class UpdateUser extends React.Component<Props,State> {
     const newState:any = {};
     newState[e.target.name] = e.target.value;
     this.setState(newState);
+  }
+
+  onChangePermissions = (permissions:any) => {
+    this.setState({
+      permissions: permissions
+    })
   }
 
   grantApiAccess = () => {
@@ -146,22 +162,9 @@ class UpdateUser extends React.Component<Props,State> {
 
     return(
       <div>
-        <Header text="New User" />
+        <Header text="Update User" />
         <Paper className={classes.container} >
           <form className={classes.form} noValidate autoComplete="off">
-            <div className={classes.apiAccess}>
-            { this.props.user.apiKey ? <p>API Key: {this.props.user.apiKey}</p> : '' }
-            { ! this.props.user.apiKey
-              ? <Button
-                onClick={() => this.grantApiAccess()}
-                className={classes.grantButton}
-                variant="contained">Grant API Access</Button>
-              : <Button
-                onClick={() => this.revokeApiAccess()}
-                className={classes.revokeButton}
-                variant="contained">Revoke API Access </Button>
-            }
-            </div>
             <FormControl className={classes.formControl}>
               <InputLabel htmlFor="role">Role</InputLabel>
               <Select
@@ -198,6 +201,26 @@ class UpdateUser extends React.Component<Props,State> {
               onChange={this.onTextFieldChange}
               value={this.state.password}
             />
+
+            <h4>API Access</h4>
+            <div className={classes.apiAccess}>
+            { this.props.user.apiKey ? <p>API Key: {this.props.user.apiKey}</p> : '' }
+            { ! this.props.user.apiKey
+              ? <Button
+                onClick={() => this.grantApiAccess()}
+                className={classes.grantButton}
+                variant="contained">Grant API Access</Button>
+              : <Button
+                onClick={() => this.revokeApiAccess()}
+                className={classes.revokeButton}
+                variant="contained">Revoke API Access </Button>
+            }
+            </div>
+
+            {this.state.role && this.state.role !== ROLES.ADMIN && <Permissions
+              permissions={this.state.permissions}
+              onChange={this.onChangePermissions}
+            />}
 
             <div className={classes.buttons}>
               <Button
